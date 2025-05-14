@@ -3,9 +3,8 @@
 BlockDragHandler 클래스를 SOLID 원칙에 맞게 리팩토링을 합니다.
 
 ## 결과
-
 ### 다이어그램
-
+![diagram](https://github.com/chahoseong/Employment-Task/blob/main/Docs/Refactoring/BlockDragHandler%20Refactoring.png)
 ### 클래스
 #### BlockDragHandler
 입력 장치의 입력을 받아서 전달하는 일을 합니다.
