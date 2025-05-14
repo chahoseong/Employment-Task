@@ -48,7 +48,7 @@ public class BlockObject : MonoBehaviour
                     preBoardBlockObject.playingBlock = null;
                 }
 
-                if(boardBlock.CheckAdjacentBlock(this, destroyStartPos)) boardBlock.playingBlock = this;
+                //if(boardBlock.CheckAdjacentBlock(this, destroyStartPos)) boardBlock.playingBlock = this;
 
                 // 이전 BoardBlockObject 갱신
                 preBoardBlockObject = boardBlock;

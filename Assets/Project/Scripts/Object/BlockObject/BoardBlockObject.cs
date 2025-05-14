@@ -1,12 +1,13 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Vector3 = UnityEngine.Vector3;
 
 public class BoardBlockObject : MonoBehaviour
 {
-    public BoardController _ctrl;
-    public BlockObject playingBlock;
+    public BoardController controller;
+    public BlockPiece playingBlock;
     public bool isCheckBlock;
     public List<int> checkGroupIdx;
     public List<ColorType> colorType;
@@ -21,26 +22,26 @@ public class BoardBlockObject : MonoBehaviour
     public ColorType verticalColorType => 
         isHorizon.IndexOf(false) != -1 ? colorType[isHorizon.IndexOf(true)] : ColorType.None;
     
-    public bool CheckAdjacentBlock(BlockObject block, Vector3 destroyStartPos)
+    public bool CheckAdjacentBlock(BlockPiece blockPiece, Vector3 destroyStartPos)
     {
         if (!isCheckBlock) return false;
-        if (!block.dragHandler.enabled) return false;
+        if (!blockPiece.Group.enabled) return false;
         for (int i = 0; i < colorType.Count; i++)
         {
-            if (block.colorType == colorType[i])
+            if (blockPiece.Color == colorType[i])
             {
                 int length = 0;
                 if (isHorizon[i])
                 {
-                    if (block.dragHandler.horizon > len[i]) return false;
-                    if (!_ctrl.CheckCanDestroy(this, block)) return false;
-                    length = block.dragHandler.vertical;
+                    if (blockPiece.Group.Bounds.Width > len[i]) return false;
+                    if (!controller.CheckCanDestroy(this, blockPiece)) return false;
+                    length = blockPiece.Group.Bounds.Height;
                 }
                 else
                 {
-                    if (block.dragHandler.vertical > len[i]) return false;
-                    if (!_ctrl.CheckCanDestroy(this, block)) return false;
-                    length = block.dragHandler.horizon;
+                    if (blockPiece.Group.Bounds.Height > len[i]) return false;
+                    if (!controller.CheckCanDestroy(this, blockPiece)) return false;
+                    length = blockPiece.Group.Bounds.Width;
                 }
 
                 /*block.dragHandler.transform.position =
@@ -48,29 +49,25 @@ public class BoardBlockObject : MonoBehaviour
                                 block.dragHandler.transform.position.y,
                                 y - block.offsetToCenter.y) * 0.79f;*/
 
-                block.dragHandler.transform.position = destroyStartPos;
-                block.dragHandler.ReleaseInput();
+                blockPiece.Group.transform.position = destroyStartPos;
+                blockPiece.Group.GetComponent<BlockDragHandler>().ReleaseInput();
 
-                foreach (var blockObject in block.dragHandler.blocks)
-                {
-                    blockObject.ColliderOff();
-                }
+                blockPiece.Group.SetCollisionEnabled(false);
+                blockPiece.Group.enabled = false;
 
-                block.dragHandler.enabled = false;
-
-                bool isRight = isHorizon[i] ? y < _ctrl.boardHeight / 2 : x < _ctrl.boardWidth / 2;
+                bool isRight = isHorizon[i] ? y < controller.Height / 2 : x < controller.Width / 2;
                 if (!isRight) length *= -1;
                 Vector3 pos = isHorizon[i]
-                    ? new Vector3(block.dragHandler.transform.position.x, block.dragHandler.transform.position.y,
-                        block.dragHandler.transform.position.z - length * 0.79f)
-                    : new Vector3(block.dragHandler.transform.position.x - length * 0.79f,
-                        block.dragHandler.transform.position.y, block.dragHandler.transform.position.z);
+                    ? new Vector3(blockPiece.Group.transform.position.x, blockPiece.Group.transform.position.y,
+                        blockPiece.Group.transform.position.z - length * 0.79f)
+                    : new Vector3(blockPiece.Group.transform.position.x - length * 0.79f,
+                        blockPiece.Group.transform.position.y, blockPiece.Group.transform.position.z);
 
 
                 Vector3 centerPos =
                     isHorizon[i]
-                        ? block.dragHandler.GetCenterX()
-                        : block.dragHandler.GetCenterZ(); //_ctrl.CenterOfBoardBlockGroup(len, isHorizon, this);
+                        ? blockPiece.Group.GetCenterX()
+                        : blockPiece.Group.GetCenterZ(); //_ctrl.CenterOfBoardBlockGroup(len, isHorizon, this);
                 LaunchDirection direction = GetLaunchDirection(x, y, isHorizon[i]);
                 Quaternion rotation = Quaternion.identity;
 
@@ -100,23 +97,14 @@ public class BoardBlockObject : MonoBehaviour
                         break;
                 }
 
-                int blockLength = isHorizon[i] ? block.dragHandler.horizon : block.dragHandler.vertical;
-                ParticleSystem[] pss = BoardController.Instance.destroyParticlePrefab
-                    .GetComponentsInChildren<ParticleSystem>();
-                foreach (var ps in pss)
-                {
-                    ParticleSystemRenderer psrs = ps.GetComponent<ParticleSystemRenderer>();
-                    psrs.material = BoardController.Instance.GetTargetMaterial((int)block.colorType);
-                }
-
-                //TODO : Move to Other Class & Adjust Direction / Position
-
-                ParticleSystem particle = Instantiate(BoardController.Instance.destroyParticlePrefab,
-                    transform.position, rotation);
-                particle.transform.position = centerPos;
-                particle.transform.localScale = new Vector3(blockLength * 0.4f, 0.5f, blockLength * 0.4f);
-
-                block.dragHandler.DestroyMove(pos, particle);
+                int blockLength = isHorizon[i] ? blockPiece.Group.Bounds.Width : blockPiece.Group.Bounds.Height;
+                ParticleEffectService particleEffectService = ServiceLocator.Get<ParticleEffectService>();
+                GameObject particleInstance = particleEffectService.CreateBlockDestroyEffect(blockPiece.Color);
+                particleInstance.transform.position = centerPos;
+                particleInstance.transform.rotation = rotation;
+                particleInstance.transform.localScale = new Vector3(blockLength * 0.4f, 0.5f, blockLength * 0.4f);
+                
+                blockPiece.Group.DestroyMove(pos, particleInstance);
             }
         }
 
@@ -129,13 +117,13 @@ public class BoardBlockObject : MonoBehaviour
         if (x == 0 && y == 0)
             return isHorizon ? LaunchDirection.Down : LaunchDirection.Left;
     
-        if (x == 0 && y == _ctrl.boardHeight)
+        if (x == 0 && y == controller.Height)
             return isHorizon ? LaunchDirection.Up : LaunchDirection.Left;
     
-        if (x == _ctrl.boardWidth && y == 0)
+        if (x == controller.Width && y == 0)
             return isHorizon ? LaunchDirection.Down : LaunchDirection.Right;
     
-        if (x == _ctrl.boardWidth && y == _ctrl.boardHeight)
+        if (x == controller.Width && y == controller.Height)
             return isHorizon ? LaunchDirection.Up : LaunchDirection.Right;
     
         // 기본 경계 케이스들
@@ -145,10 +133,10 @@ public class BoardBlockObject : MonoBehaviour
         if (y == 0)
             return isHorizon ? LaunchDirection.Down : LaunchDirection.Left;
     
-        if (x == _ctrl.boardWidth)
+        if (x == controller.Width)
             return isHorizon ? LaunchDirection.Down : LaunchDirection.Right;
     
-        if (y == _ctrl.boardHeight)
+        if (y == controller.Height)
             return isHorizon ? LaunchDirection.Up : LaunchDirection.Right;
     
         // 기본값 (필요하다면)

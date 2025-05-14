@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1780244754183184133}
   - component: {fileID: 5960059235105626074}
   - component: {fileID: 5895507142126784202}
-  - component: {fileID: 5443320931837890729}
+  - component: {fileID: 6485250348793437806}
   - component: {fileID: 8141173989493318750}
   - component: {fileID: 6973318187054534009}
   m_Layer: 7
@@ -89,7 +89,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5443320931837890729
+--- !u!114 &6485250348793437806
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,11 +98,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2041982139946823201}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 089a2b4a784c2459596833dd7c7a928a, type: 3}
+  m_Script: {fileID: 11500000, guid: 87c1a8ec41a4d184da28cb83c0cefcf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragHandler: {fileID: 0}
-  colorType: 0
+  mainCollider: {fileID: 8141173989493318750}
+  touchCollider: {fileID: 6973318187054534009}
   x: 0
   y: 0
   offsetToCenter: {x: 0, y: 0}

@@ -335,7 +335,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7749984086351319085}
   - component: {fileID: 3197205242250341373}
-  - component: {fileID: 4458697015707937746}
+  - component: {fileID: 5473961632452359642}
   - component: {fileID: -6573339705410717959}
   m_Layer: 0
   m_Name: Jelly Cube
@@ -384,7 +384,7 @@ MonoBehaviour:
   - {fileID: 2028742578461249541}
   - {fileID: 7771100258322291648}
   followingBaseTransform: {fileID: 4652182738677182265}
---- !u!114 &4458697015707937746
+--- !u!114 &5473961632452359642
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -393,15 +393,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3816581106366051946}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 089a2b4a784c2459596833dd7c7a928a, type: 3}
+  m_Script: {fileID: 11500000, guid: 87c1a8ec41a4d184da28cb83c0cefcf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragHandler: {fileID: 0}
-  colorType: 0
+  mainCollider: {fileID: 5211935134027290726}
+  touchCollider: {fileID: -6573339705410717959}
   x: 0
   y: 0
-  Col: {fileID: 5211935134027290726}
-  touchCollider: {fileID: -6573339705410717959}
   offsetToCenter: {x: 0, y: 0}
   preBoardBlockObject: {fileID: 0}
 --- !u!65 &-6573339705410717959
