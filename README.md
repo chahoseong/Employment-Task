@@ -1,6 +1,9 @@
 # 🎮 ActionFit Code Test - Unity Client Developer
 
 ---
+- Code Refactoring: [Docs/Refacotring](https://github.com/chahoseong/Employment-Task/tree/main/Docs/Refactoring)
+- 나머지 부분들은 수행하지 못하였습니다.
+---
 
 ## ✅ 목표
 
