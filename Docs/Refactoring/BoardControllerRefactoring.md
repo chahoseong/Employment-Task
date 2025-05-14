@@ -4,7 +4,7 @@ BoardController 클래스를 SOLID 원칙에 따라 리팩토링합니다.
 
 ## 결과
 ### 다이어그램
-
+![diagram](https://github.com/chahoseong/Employment-Task/blob/main/Docs/Refactoring/BoardController%20Refactoring.png?raw=true)
 ### 클래스
 #### Builder
 `BoardController`가 `StageData`로 레벨을 생성하는 일을 Builder 클래스로 분할했습니다. Builder의 종류는 다음과 같습니다.
